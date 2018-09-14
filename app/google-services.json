@@ -1,0 +1,174 @@
+{
+  "project_info": {
+    "project_number": "705487267697",
+    "firebase_url": "https://newlocation-31a4a.firebaseio.com",
+    "project_id": "newlocation-31a4a",
+    "storage_bucket": "newlocation-31a4a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:705487267697:android:f64fc19efdfbae3e",
+        "android_client_info": {
+          "package_name": "com.example.fuzitsu.autolocation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "705487267697-tl2l8tcecofqvr908p7133fil9a4cd45.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fuzitsu.autolocation",
+            "certificate_hash": "532764f367d090817f7b5bd6bed93371bdd1128d"
+          }
+        },
+        {
+          "client_id": "705487267697-dq3cfkar94atet2q2fk066uvv7bavarv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRh5jgzItFoHkk-rPI4ZIPMWqo9wNymzs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "705487267697-dq3cfkar94atet2q2fk066uvv7bavarv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:705487267697:android:9c7b05fed2ba326e",
+        "android_client_info": {
+          "package_name": "com.example.fuzitsu.remoteconfig"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "705487267697-6j2ccgoeo7s5iv6fng1k7c31nqgfo59f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fuzitsu.remoteconfig",
+            "certificate_hash": "532764f367d090817f7b5bd6bed93371bdd1128d"
+          }
+        },
+        {
+          "client_id": "705487267697-dq3cfkar94atet2q2fk066uvv7bavarv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRh5jgzItFoHkk-rPI4ZIPMWqo9wNymzs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "705487267697-dq3cfkar94atet2q2fk066uvv7bavarv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:705487267697:android:00f2773b688c015a",
+        "android_client_info": {
+          "package_name": "com.viettelpost.remoteconfig.controlremoteconfig"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "705487267697-dq3cfkar94atet2q2fk066uvv7bavarv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRh5jgzItFoHkk-rPI4ZIPMWqo9wNymzs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:705487267697:android:61b908dbd9fd0d07",
+        "android_client_info": {
+          "package_name": "com.viettelpost.remoteconfig.myremoteconfig"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "705487267697-80a6ceik1l2uvgbsainvlmaqd3ep2ihs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.viettelpost.remoteconfig.myremoteconfig",
+            "certificate_hash": "532764f367d090817f7b5bd6bed93371bdd1128d"
+          }
+        },
+        {
+          "client_id": "705487267697-dq3cfkar94atet2q2fk066uvv7bavarv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRh5jgzItFoHkk-rPI4ZIPMWqo9wNymzs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "705487267697-dq3cfkar94atet2q2fk066uvv7bavarv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

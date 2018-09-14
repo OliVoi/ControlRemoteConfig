@@ -279,8 +279,6 @@ public class auth {
         return httpURLConnection;
     }
     public static void main(String[] args) throws IOException {
-        auth a = new auth();
-        a.getAccessToken();
     }
 
 }

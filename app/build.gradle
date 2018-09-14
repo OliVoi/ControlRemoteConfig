@@ -47,8 +47,11 @@ dependencies {
 
     implementation "com.google.android.gms:play-services-auth:16.0.0"
 
-    compile 'com.google.api-client:google-api-client:1.22.0'
+    compile 'com.google.api-client:google-api-client:1.23.0'
+
+    //compile 'com.google.api-client:google-api-client:1.22.0'
     //compile 'com.google.apis:google-api-services-vision:v1-rev357-1.22.0'
+    //implementation 'com.google.firebase:firebase-admin:6.4.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

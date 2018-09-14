@@ -28,7 +28,7 @@ import java.util.zip.GZIPOutputStream;
 
 public class Config {
 
-    private final static String PROJECT_ID = "PROJECT_ID";
+    private final static String PROJECT_ID = "newlocation-31a4a";
     private final static String BASE_URL = "https://firebaseremoteconfig.googleapis.com";
     private final static String REMOTE_CONFIG_ENDPOINT = "/v1/projects/" + PROJECT_ID + "/remoteConfig";
     private final static String[] SCOPES = {"https://www.googleapis.com/auth/firebase.remoteconfig"};

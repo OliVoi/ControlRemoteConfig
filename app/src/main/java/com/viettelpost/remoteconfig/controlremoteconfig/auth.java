@@ -1,5 +1,10 @@
 package com.viettelpost.remoteconfig.controlremoteconfig;
 
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
+import android.media.session.MediaSession;
+import android.util.Log;
+
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,10 +28,11 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class auth {
-    private final static String PROJECT_ID = "PROJECT_ID";
+    private final static String PROJECT_ID = "newlocation-31a4a";
     private final static String BASE_URL = "https://firebaseremoteconfig.googleapis.com";
     private final static String REMOTE_CONFIG_ENDPOINT = "/v1/projects/" + PROJECT_ID + "/remoteConfig";
-    private final static String[] SCOPES = { "https://www.googleapis.com/auth/firebase.remoteconfig" };
+    private final static String[] SCOPES = {"https://www.googleapis.com/auth/firebase.remoteconfig"};
+    private final static String token = "ya29.c.EloYBoURo0hKFdVZp5DbD-Ol-Cn_nTfr2ckatHz_UVk2M-AfP2QSUkSI6Vvyzwo6wFQlaP6KRRmD5UB93OHUb-gDUGtF-CohsvoQXMSAcWbasUMmHqoS-mlmQU4";
 
     /**
      * Retrieve a valid access token that can be use to authorize requests to the Remote Config REST
@@ -36,11 +42,37 @@ public class auth {
      * @throws IOException
      */
     // [START retrieve_access_token]
-    private static String getAccessToken() throws IOException {
-        GoogleCredential googleCredential = GoogleCredential
-                .fromStream(new FileInputStream("serviceAccountkey.json"))
-                .createScoped(Arrays.asList(SCOPES));
-        googleCredential.refreshToken();
+    public String getAccessToken() throws IOException{
+
+            GoogleCredential googleCredential = GoogleCredential
+                    .fromStream(new FileInputStream("app/src/main/assets/serviceAccountkey.json") {
+                    })
+                    .createScoped(Arrays.asList(SCOPES));
+            googleCredential.refreshToken();
+        System.out.println(googleCredential.getAccessToken());
+
+
+        // Load the service account key JSON file
+//        FileInputStream serviceAccount = new FileInputStream("serviceAccount.json");
+//
+//// Authenticate a Google credential with the service account
+//        GoogleCredential googleCred = GoogleCredential.fromStream(serviceAccount);
+//
+//// Add the required scope to the Google credential
+//        GoogleCredential scoped = googleCred.createScoped(
+//                Arrays.asList(
+//                        "https://www.googleapis.com/auth/firebase"
+//                )
+//        );
+//
+//// Use the Google credential to generate an access token
+//        scoped.refreshToken();
+//        String token = scoped.getAccessToken();
+//
+//        System.out.println(token);
+//
+//// Include the access token in the Authorization header.
+//Log.e("yyyyy",googleCredential.getAccessToken());
         return googleCredential.getAccessToken();
     }
     // [END retrieve_access_token]
@@ -50,7 +82,7 @@ public class auth {
      *
      * @throws IOException
      */
-    private static void getTemplate() throws IOException {
+    public void getTemplate( String newToken) throws IOException {
         HttpURLConnection httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT);
         httpURLConnection.setRequestMethod("GET");
         httpURLConnection.setRequestProperty("Accept-Encoding", "gzip");
@@ -66,7 +98,7 @@ public class auth {
             Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
             String jsonStr = gson.toJson(jsonElement);
 
-            File file = new File("config.json");
+            File file = new File("app/src/main/assets/config.json");
             PrintWriter printWriter = new PrintWriter(new FileWriter(file));
             printWriter.print(jsonStr);
             printWriter.flush();
@@ -88,7 +120,7 @@ public class auth {
      *
      * @throws IOException
      */
-    private static void getVersions() throws IOException {
+    public void getVersions() throws IOException {
         HttpURLConnection httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT
                 + ":listVersions?pageSize=5");
         httpURLConnection.setRequestMethod("GET");
@@ -108,10 +140,9 @@ public class auth {
      * Roll back to an available version of Firebase Remote Config template.
      *
      * @param version The version to roll back to.
-     *
      * @throws IOException
      */
-    private static void rollback(int version) throws IOException {
+    public void rollback(int version) throws IOException {
         HttpURLConnection httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT
                 + ":rollback");
         httpURLConnection.setDoOutput(true);
@@ -128,7 +159,7 @@ public class auth {
 
         int code = httpURLConnection.getResponseCode();
         if (code == 200) {
-            System.out.println("Rolled back to: "  + version);
+            System.out.println("Rolled back to: " + version);
             InputStream inputStream = new GZIPInputStream(httpURLConnection.getInputStream());
             System.out.println(inputstreamToPrettyString(inputStream));
 
@@ -147,7 +178,7 @@ public class auth {
      *
      * @throws IOException
      */
-    private static void publishTemplate(String etag) throws IOException {
+    public void publishTemplate(String etag) throws IOException {
         if (etag.equals("*")) {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Are you sure you would like to force replace the template? Yes (y), No (n)");
@@ -189,7 +220,7 @@ public class auth {
      * @throws FileNotFoundException
      */
     private static String readConfig() throws FileNotFoundException {
-        File file = new File("config.json");
+        File file = new File("app/src/main/assets/config.json");
         Scanner scanner = new Scanner(file);
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -204,7 +235,6 @@ public class auth {
      *
      * @param inputStream Content to be formatted.
      * @return Pretty JSON formatted string.
-     *
      * @throws IOException
      */
     private static String inputstreamToPrettyString(InputStream inputStream) throws IOException {
@@ -241,17 +271,16 @@ public class auth {
      * @return Base HttpURLConnection.
      * @throws IOException
      */
-    private static HttpURLConnection getCommonConnection(String endpoint) throws IOException {
+    public HttpURLConnection getCommonConnection(String endpoint) throws IOException {
         URL url = new URL(endpoint);
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
         httpURLConnection.setRequestProperty("Authorization", "Bearer " + getAccessToken());
         httpURLConnection.setRequestProperty("Content-Type", "application/json; UTF-8");
         return httpURLConnection;
     }
-
     public static void main(String[] args) throws IOException {
-        getTemplate();
-
+        auth a = new auth();
+        a.getAccessToken();
     }
 
 }

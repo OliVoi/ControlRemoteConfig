@@ -4,6 +4,8 @@ import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.media.session.MediaSession;
 import android.util.Log;
+import android.widget.Toast;
+
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.gson.Gson;
@@ -31,62 +33,23 @@ public class auth {
     private final static String PROJECT_ID = "newlocation-31a4a";
     private final static String BASE_URL = "https://firebaseremoteconfig.googleapis.com";
     private final static String REMOTE_CONFIG_ENDPOINT = "/v1/projects/" + PROJECT_ID + "/remoteConfig";
-    private final static String[] SCOPES = {"https://www.googleapis.com/auth/firebase.remoteconfig"};
-    private final static String token = "ya29.c.EloYBoURo0hKFdVZp5DbD-Ol-Cn_nTfr2ckatHz_UVk2M-AfP2QSUkSI6Vvyzwo6wFQlaP6KRRmD5UB93OHUb-gDUGtF-CohsvoQXMSAcWbasUMmHqoS-mlmQU4";
+    private final static String SCOPES = "https://www.googleapis.com/auth/firebase.remoteconfig";
+    private String token = "";
 
-    /**
-     * Retrieve a valid access token that can be use to authorize requests to the Remote Config REST
-     * API.
-     *
-     * @return Access token.
-     * @throws IOException
-     */
     // [START retrieve_access_token]
-    public String getAccessToken() throws IOException{
-
-            GoogleCredential googleCredential = GoogleCredential
-                    .fromStream(new FileInputStream("app/src/main/assets/serviceAccountkey.json") {
-                    })
-                    .createScoped(Arrays.asList(SCOPES));
-            googleCredential.refreshToken();
-        System.out.println(googleCredential.getAccessToken());
-
-
-        // Load the service account key JSON file
-//        FileInputStream serviceAccount = new FileInputStream("serviceAccount.json");
-//
-//// Authenticate a Google credential with the service account
-//        GoogleCredential googleCred = GoogleCredential.fromStream(serviceAccount);
-//
-//// Add the required scope to the Google credential
-//        GoogleCredential scoped = googleCred.createScoped(
-//                Arrays.asList(
-//                        "https://www.googleapis.com/auth/firebase"
-//                )
-//        );
-//
-//// Use the Google credential to generate an access token
-//        scoped.refreshToken();
-//        String token = scoped.getAccessToken();
-//
-//        System.out.println(token);
-//
-//// Include the access token in the Authorization header.
-//Log.e("yyyyy",googleCredential.getAccessToken());
+    private static String getAccessToken(InputStream inputStream) throws IOException {
+        GoogleCredential googleCredential = GoogleCredential
+                .fromStream(inputStream)
+                .createScoped(Arrays.asList(SCOPES));
+        googleCredential.refreshToken();
         return googleCredential.getAccessToken();
     }
-    // [END retrieve_access_token]
 
-    /**
-     * Get current Firebase Remote Config template from server and store it locally.
-     *
-     * @throws IOException
-     */
-    public void getTemplate( String newToken) throws IOException {
+    public void getTemplate() throws IOException {
+
         HttpURLConnection httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT);
         httpURLConnection.setRequestMethod("GET");
         httpURLConnection.setRequestProperty("Accept-Encoding", "gzip");
-
         int code = httpURLConnection.getResponseCode();
         if (code == 200) {
             InputStream inputStream = new GZIPInputStream(httpURLConnection.getInputStream());
@@ -98,7 +61,7 @@ public class auth {
             Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
             String jsonStr = gson.toJson(jsonElement);
 
-            File file = new File("app/src/main/assets/config.json");
+            File file = new File("config.json");
             PrintWriter printWriter = new PrintWriter(new FileWriter(file));
             printWriter.print(jsonStr);
             printWriter.flush();
@@ -115,112 +78,90 @@ public class auth {
 
     }
 
-    /**
-     * Print the last 5 available Firebase Remote Config template metadata from the server.
-     *
-     * @throws IOException
-     */
-    public void getVersions() throws IOException {
-        HttpURLConnection httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT
-                + ":listVersions?pageSize=5");
-        httpURLConnection.setRequestMethod("GET");
+//    public void getVersions() throws IOException {
+//        HttpURLConnection httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT
+//                + ":listVersions?pageSize=5");
+//        httpURLConnection.setRequestMethod("GET");
+//
+//        int code = httpURLConnection.getResponseCode();
+//        if (code == 200) {
+//            String versions = inputstreamToPrettyString(httpURLConnection.getInputStream());
+//
+//            System.out.println("Versions:");
+//            System.out.println(versions);
+//        } else {
+//            System.out.println(inputstreamToString(httpURLConnection.getErrorStream()));
+//        }
+//    }
+//
+//    public void rollback(int version) throws IOException {
+//        HttpURLConnection httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT
+//                + ":rollback");
+//        httpURLConnection.setDoOutput(true);
+//        httpURLConnection.setRequestMethod("POST");
+//        httpURLConnection.setRequestProperty("Accept-Encoding", "gzip");
+//
+//        JsonObject jsonObject = new JsonObject();
+//        jsonObject.addProperty("version_number", version);
+//
+//        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(httpURLConnection.getOutputStream());
+//        outputStreamWriter.write(jsonObject.toString());
+//        outputStreamWriter.flush();
+//        outputStreamWriter.close();
+//
+//        int code = httpURLConnection.getResponseCode();
+//        if (code == 200) {
+//            System.out.println("Rolled back to: "  + version);
+//            InputStream inputStream = new GZIPInputStream(httpURLConnection.getInputStream());
+//            System.out.println(inputstreamToPrettyString(inputStream));
+//
+//            // Print ETag
+//            String etag = httpURLConnection.getHeaderField("ETag");
+//            System.out.println("ETag from server: " + etag);
+//        } else {
+//            System.out.println("Error:");
+//            InputStream inputStream = new GZIPInputStream(httpURLConnection.getErrorStream());
+//            System.out.println(inputstreamToString(inputStream));
+//        }
+//    }
 
-        int code = httpURLConnection.getResponseCode();
-        if (code == 200) {
-            String versions = inputstreamToPrettyString(httpURLConnection.getInputStream());
+//    public void publishTemplate(String etag) throws IOException {
+//        if (etag.equals("*")) {
+//            Scanner scanner = new Scanner(System.in);
+//            System.out.println("Are you sure you would like to force replace the template? Yes (y), No (n)");
+//            String answer = scanner.nextLine();
+//            if (!answer.equalsIgnoreCase("y")) {
+//                System.out.println("Publish canceled.");
+//                return;
+//            }
+//        }
+//
+//        System.out.println("Publishing template...");
+//        HttpURLConnection httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT);
+//        httpURLConnection.setDoOutput(true);
+//        httpURLConnection.setRequestMethod("PUT");
+//        httpURLConnection.setRequestProperty("If-Match", etag);
+//        httpURLConnection.setRequestProperty("Content-Encoding", "gzip");
+//
+//        String configStr = readConfig();
+//
+//        GZIPOutputStream gzipOutputStream = new GZIPOutputStream(httpURLConnection.getOutputStream());
+//        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(gzipOutputStream);
+//        outputStreamWriter.write(configStr);
+//        outputStreamWriter.flush();
+//        outputStreamWriter.close();
+//
+//        int code = httpURLConnection.getResponseCode();
+//        if (code == 200) {
+//            System.out.println("Template has been published.");
+//        } else {
+//            System.out.println(inputstreamToString(httpURLConnection.getErrorStream()));
+//        }
+//
+//    }
 
-            System.out.println("Versions:");
-            System.out.println(versions);
-        } else {
-            System.out.println(inputstreamToString(httpURLConnection.getErrorStream()));
-        }
-    }
-
-    /**
-     * Roll back to an available version of Firebase Remote Config template.
-     *
-     * @param version The version to roll back to.
-     * @throws IOException
-     */
-    public void rollback(int version) throws IOException {
-        HttpURLConnection httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT
-                + ":rollback");
-        httpURLConnection.setDoOutput(true);
-        httpURLConnection.setRequestMethod("POST");
-        httpURLConnection.setRequestProperty("Accept-Encoding", "gzip");
-
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("version_number", version);
-
-        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(httpURLConnection.getOutputStream());
-        outputStreamWriter.write(jsonObject.toString());
-        outputStreamWriter.flush();
-        outputStreamWriter.close();
-
-        int code = httpURLConnection.getResponseCode();
-        if (code == 200) {
-            System.out.println("Rolled back to: " + version);
-            InputStream inputStream = new GZIPInputStream(httpURLConnection.getInputStream());
-            System.out.println(inputstreamToPrettyString(inputStream));
-
-            // Print ETag
-            String etag = httpURLConnection.getHeaderField("ETag");
-            System.out.println("ETag from server: " + etag);
-        } else {
-            System.out.println("Error:");
-            InputStream inputStream = new GZIPInputStream(httpURLConnection.getErrorStream());
-            System.out.println(inputstreamToString(inputStream));
-        }
-    }
-
-    /**
-     * Publish local template to Firebase server.
-     *
-     * @throws IOException
-     */
-    public void publishTemplate(String etag) throws IOException {
-        if (etag.equals("*")) {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Are you sure you would like to force replace the template? Yes (y), No (n)");
-            String answer = scanner.nextLine();
-            if (!answer.equalsIgnoreCase("y")) {
-                System.out.println("Publish canceled.");
-                return;
-            }
-        }
-
-        System.out.println("Publishing template...");
-        HttpURLConnection httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT);
-        httpURLConnection.setDoOutput(true);
-        httpURLConnection.setRequestMethod("PUT");
-        httpURLConnection.setRequestProperty("If-Match", etag);
-        httpURLConnection.setRequestProperty("Content-Encoding", "gzip");
-
-        String configStr = readConfig();
-
-        GZIPOutputStream gzipOutputStream = new GZIPOutputStream(httpURLConnection.getOutputStream());
-        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(gzipOutputStream);
-        outputStreamWriter.write(configStr);
-        outputStreamWriter.flush();
-        outputStreamWriter.close();
-
-        int code = httpURLConnection.getResponseCode();
-        if (code == 200) {
-            System.out.println("Template has been published.");
-        } else {
-            System.out.println(inputstreamToString(httpURLConnection.getErrorStream()));
-        }
-
-    }
-
-    /**
-     * Read the Firebase Remote Config template from config.json file.
-     *
-     * @return String with contents of config.json file.
-     * @throws FileNotFoundException
-     */
-    private static String readConfig() throws FileNotFoundException {
-        File file = new File("app/src/main/assets/config.json");
+     public String readConfig() throws FileNotFoundException {
+        File file = new File("config.json");
         Scanner scanner = new Scanner(file);
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -230,14 +171,7 @@ public class auth {
         return stringBuilder.toString();
     }
 
-    /**
-     * Format content from an InputStream as pretty JSON.
-     *
-     * @param inputStream Content to be formatted.
-     * @return Pretty JSON formatted string.
-     * @throws IOException
-     */
-    private static String inputstreamToPrettyString(InputStream inputStream) throws IOException {
+    public String inputstreamToPrettyString(InputStream inputStream) throws IOException {
         String response = inputstreamToString(inputStream);
 
         JsonParser jsonParser = new JsonParser();
@@ -249,14 +183,7 @@ public class auth {
         return jsonStr;
     }
 
-    /**
-     * Read contents of InputStream into String.
-     *
-     * @param inputStream InputStream to read.
-     * @return String containing contents of InputStream.
-     * @throws IOException
-     */
-    private static String inputstreamToString(InputStream inputStream) throws IOException {
+    public String inputstreamToString(InputStream inputStream) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         Scanner scanner = new Scanner(inputStream);
         while (scanner.hasNext()) {
@@ -265,22 +192,11 @@ public class auth {
         return stringBuilder.toString();
     }
 
-    /**
-     * Create HttpURLConnection that can be used for both retrieving and publishing.
-     *
-     * @return Base HttpURLConnection.
-     * @throws IOException
-     */
     public HttpURLConnection getCommonConnection(String endpoint) throws IOException {
         URL url = new URL(endpoint);
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-        httpURLConnection.setRequestProperty("Authorization", "Bearer " + getAccessToken());
+        httpURLConnection.setRequestProperty("Authorization", "Bearer " );
         httpURLConnection.setRequestProperty("Content-Type", "application/json; UTF-8");
         return httpURLConnection;
     }
-    public static void main(String[] args) throws IOException {
-        auth a = new auth();
-        a.getAccessToken();
-    }
-
 }

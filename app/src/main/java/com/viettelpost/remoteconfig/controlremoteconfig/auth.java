@@ -255,7 +255,7 @@ public class auth {
 
     public static void main(String[] args) throws IOException {
 
-        publishTemplate("etag-705487267697-30");
+        getTemplate();
     }
 
 }

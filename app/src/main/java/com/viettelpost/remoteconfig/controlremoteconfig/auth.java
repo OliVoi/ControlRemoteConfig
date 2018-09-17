@@ -32,7 +32,6 @@ public class auth {
     private final static String BASE_URL = "https://firebaseremoteconfig.googleapis.com";
     private final static String REMOTE_CONFIG_ENDPOINT = "/v1/projects/" + PROJECT_ID + "/remoteConfig";
     private final static String[] SCOPES = {"https://www.googleapis.com/auth/firebase.remoteconfig"};
-    private final static String token = "ya29.c.EloYBoURo0hKFdVZp5DbD-Ol-Cn_nTfr2ckatHz_UVk2M-AfP2QSUkSI6Vvyzwo6wFQlaP6KRRmD5UB93OHUb-gDUGtF-CohsvoQXMSAcWbasUMmHqoS-mlmQU4";
 
     /**
      * Retrieve a valid access token that can be use to authorize requests to the Remote Config REST
@@ -42,37 +41,11 @@ public class auth {
      * @throws IOException
      */
     // [START retrieve_access_token]
-    public String getAccessToken() throws IOException{
-
-            GoogleCredential googleCredential = GoogleCredential
-                    .fromStream(new FileInputStream("app/src/main/assets/serviceAccountkey.json") {
-                    })
-                    .createScoped(Arrays.asList(SCOPES));
-            googleCredential.refreshToken();
-        System.out.println(googleCredential.getAccessToken());
-
-
-        // Load the service account key JSON file
-//        FileInputStream serviceAccount = new FileInputStream("serviceAccount.json");
-//
-//// Authenticate a Google credential with the service account
-//        GoogleCredential googleCred = GoogleCredential.fromStream(serviceAccount);
-//
-//// Add the required scope to the Google credential
-//        GoogleCredential scoped = googleCred.createScoped(
-//                Arrays.asList(
-//                        "https://www.googleapis.com/auth/firebase"
-//                )
-//        );
-//
-//// Use the Google credential to generate an access token
-//        scoped.refreshToken();
-//        String token = scoped.getAccessToken();
-//
-//        System.out.println(token);
-//
-//// Include the access token in the Authorization header.
-//Log.e("yyyyy",googleCredential.getAccessToken());
+    private static String getAccessToken() throws IOException {
+        GoogleCredential googleCredential = GoogleCredential
+                .fromStream(new FileInputStream("serviceAccount.json"))
+                .createScoped(Arrays.asList(SCOPES));
+        googleCredential.refreshToken();
         return googleCredential.getAccessToken();
     }
     // [END retrieve_access_token]
@@ -82,7 +55,7 @@ public class auth {
      *
      * @throws IOException
      */
-    public void getTemplate( String newToken) throws IOException {
+    private static void getTemplate() throws IOException {
         HttpURLConnection httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT);
         httpURLConnection.setRequestMethod("GET");
         httpURLConnection.setRequestProperty("Accept-Encoding", "gzip");
@@ -98,9 +71,10 @@ public class auth {
             Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
             String jsonStr = gson.toJson(jsonElement);
 
-            File file = new File("app/src/main/assets/config.json");
+            File file = new File("config.json");
             PrintWriter printWriter = new PrintWriter(new FileWriter(file));
             printWriter.print(jsonStr);
+            System.out.print(jsonStr);
             printWriter.flush();
             printWriter.close();
 
@@ -120,7 +94,7 @@ public class auth {
      *
      * @throws IOException
      */
-    public void getVersions() throws IOException {
+    private static void getVersions() throws IOException {
         HttpURLConnection httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT
                 + ":listVersions?pageSize=5");
         httpURLConnection.setRequestMethod("GET");
@@ -142,7 +116,7 @@ public class auth {
      * @param version The version to roll back to.
      * @throws IOException
      */
-    public void rollback(int version) throws IOException {
+    private static void rollback(int version) throws IOException {
         HttpURLConnection httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT
                 + ":rollback");
         httpURLConnection.setDoOutput(true);
@@ -178,7 +152,7 @@ public class auth {
      *
      * @throws IOException
      */
-    public void publishTemplate(String etag) throws IOException {
+    private static void publishTemplate(String etag) throws IOException {
         if (etag.equals("*")) {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Are you sure you would like to force replace the template? Yes (y), No (n)");
@@ -220,7 +194,7 @@ public class auth {
      * @throws FileNotFoundException
      */
     private static String readConfig() throws FileNotFoundException {
-        File file = new File("app/src/main/assets/config.json");
+        File file = new File("config.json");
         Scanner scanner = new Scanner(file);
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -271,14 +245,17 @@ public class auth {
      * @return Base HttpURLConnection.
      * @throws IOException
      */
-    public HttpURLConnection getCommonConnection(String endpoint) throws IOException {
+    private static HttpURLConnection getCommonConnection(String endpoint) throws IOException {
         URL url = new URL(endpoint);
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
         httpURLConnection.setRequestProperty("Authorization", "Bearer " + getAccessToken());
         httpURLConnection.setRequestProperty("Content-Type", "application/json; UTF-8");
         return httpURLConnection;
     }
+
     public static void main(String[] args) throws IOException {
+
+        publishTemplate("etag-705487267697-30");
     }
 
 }

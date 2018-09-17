@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private final static String BASE_URL = "https://firebaseremoteconfig.googleapis.com";
     private final static String REMOTE_CONFIG_ENDPOINT = "/v1/projects/" + PROJECT_ID + "/remoteConfig";
     private final static String SCOPES = "https://www.googleapis.com/auth/firebase.remoteconfig";
-    private final static String testToken = "ya29.c.EloYBlMvmnTCQsaVKklJqPhlOoy9X1JPymDsBY3PlU37E3gB_6PTEEfx0BoOl5H2iWKoBOcjsj191BMLKx8T0mk6TlNK-G5PB8ryuz1ouLgI9ZL8ABfS_i2drRU";
+    //private final static String testToken = "ya29.c.EloYBlMvmnTCQsaVKklJqPhlOoy9X1JPymDsBY3PlU37E3gB_6PTEEfx0BoOl5H2iWKoBOcjsj191BMLKx8T0mk6TlNK-G5PB8ryuz1ouLgI9ZL8ABfS_i2drRU";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
